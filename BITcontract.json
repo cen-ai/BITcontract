@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 library SafeMath {
   function mul(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -32,9 +32,7 @@ library SafeMath {
 contract Ownable {
   address public owner;
 
-
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
 
   /**
    * @dev The Ownable constructor sets the original `owner` of the contract to the sender
@@ -44,7 +42,6 @@ contract Ownable {
     owner = msg.sender;
   }
 
-
   /**
    * @dev Throws if called by any account other than the owner.
    */
@@ -52,7 +49,6 @@ contract Ownable {
     require(msg.sender == owner);
     _;
   }
-
 
   /**
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
@@ -63,7 +59,6 @@ contract Ownable {
     OwnershipTransferred(owner, newOwner);
     owner = newOwner;
   }
-
 }
 
 contract Pausable is Ownable {
@@ -73,8 +68,7 @@ contract Pausable is Ownable {
   /**
    * set initial value to paused.
    */
-  bool public paused = true;
-
+  bool public paused = false;
 
   /**
    * @dev Modifier to make a function callable only when the contract is not paused.
@@ -276,20 +270,23 @@ contract PausableToken is StandardToken, Pausable {
 contract BITToken is PausableToken, BurnableToken {
 
     string public constant name = "Basic Intelligence Token";
+    string public constant url = "https://cen.ai";
     string public constant symbol = "BIT";
     uint8 public constant decimals = 8;
+    string public version = 'BIT_0.1';  //An arbitrary versioning scheme
     uint256 public constant INITIAL_SUPPLY = 20000000000 * 10**uint256(decimals);
     
     /**
     * @dev BITToken Constructor
     */
 
-    function BITToken() {
+    function BITToken() public {
+        Pause();
         totalSupply = INITIAL_SUPPLY;   
         balances[msg.sender] = INITIAL_SUPPLY;
     }
 
-    function transferTokens(address beneficiary, uint256 amount) onlyOwner returns (bool) {
+    function transferTokens(address beneficiary, uint256 amount) public onlyOwner returns (bool) {
         require(amount > 0);
 
         balances[owner] = balances[owner].sub(amount);
